@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start! AI小車初賽 - 大型計時器</title>
+    <!-- 引入科幻主題字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 共用基礎樣式 */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* 主題切換器樣式 */
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(128, 128, 128, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: sans-serif;
+        }
+
+        .theme-switcher select {
+            padding: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* --- 經典主題樣式 (Original) --- */
+        body.theme-original {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-color: #ffffff;
+            background-color: var(--bg-color);
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+        }
+
+        body.theme-original .top-bar { display: none; }
+        
+        body.theme-original .header-title {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            border-bottom: 8px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        body.theme-original #display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15rem;
+            font-weight: bold;
+            color: #000;
+            margin: 1rem 0;
+            line-height: 1;
+        }
+
+        body.theme-original .controls button {
+            padding: 1.5rem 4rem;
+            font-size: 2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        body.theme-original #startBtn { background-color: #27ae60; color: white; }
+        body.theme-original #stopBtn { background-color: #e74c3c; color: white; }
+        body.theme-original #resetBtn { background-color: #7f8c8d; color: white; }
+
+        body.theme-original .finished {
+            color: #e74c3c !important;
+            animation: pulse 1s infinite;
+        }
+
+        /* --- 科幻主題樣式 (Sci-Fi) --- */
+        body.theme-scifi {
+            --bg-color: #000814;
+            --tech-blue: #003566;
+            --tech-yellow: #ffc300;
+            --text-shadow: 0 0 10px rgba(255, 195, 0, 0.7), 0 0 20px rgba(255, 195, 0, 0.4);
+            --panel-bg: rgba(0, 29, 61, 0.9);
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(0, 53, 102, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 53, 102, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: white;
+            font-family: 'Orbitron', 'PingFang TC', sans-serif;
+        }
+
+        body.theme-scifi .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: repeating-linear-gradient(90deg, #ffc300, #ffc300 20px, #000 20px, #000 40px);
+            z-index: 5;
+        }
+
+        body.theme-scifi .header-title {
+            font-size: clamp(1.5rem, 6vw, 3.5rem);
+            color: var(--tech-yellow);
+            margin-bottom: 2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-shadow: var(--text-shadow);
+            border-bottom: 4px solid var(--tech-yellow);
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
+        body.theme-scifi .timer-container {
+            background: var(--panel-bg);
+            width: 95%;
+            max-width: 1000px;
+            padding: clamp(1rem, 5vw, 4rem);
+            border-radius: 10px;
+            border: 3px solid var(--tech-yellow);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 195, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body.theme-scifi #display {
+            font-size: clamp(3rem, 18vw, 15rem);
+            font-weight: 900;
+            color: var(--tech-yellow);
+            text-shadow: var(--text-shadow);
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        body.theme-scifi .controls button {
+            padding: 1rem 2rem;
+            font-size: clamp(1rem, 3.5vw, 1.8rem);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            border: 2px solid var(--tech-yellow);
+            border-radius: 0px;
+            background: transparent;
+            color: var(--tech-yellow);
+            min-width: 180px;
+        }
+
+        body.theme-scifi #startBtn:hover:not(:disabled) { 
+            background: var(--tech-yellow); 
+            color: #000;
+            box-shadow: 0 0 25px var(--tech-yellow);
+        }
+
+        body.theme-scifi #stopBtn { background: rgba(255, 195, 0, 0.1); }
+        body.theme-scifi #stopBtn:hover:not(:disabled) { 
+            background: #fff; 
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 0 25px #fff;
+        }
+
+        body.theme-scifi #resetBtn { border-color: #555; color: #777; }
+        body.theme-scifi #resetBtn:hover:not(:disabled) { background: #555; color: white; }
+
+        body.theme-scifi .finished {
+            color: #ffffff !important;
+            text-shadow: 0 0 20px #ffffff, 0 0 40px var(--tech-yellow);
+            animation: pulse 1s infinite;
+        }
+
+        /* 通用按鈕效果 */
+        button {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        button:hover:not(:disabled) { transform: scale(1.05); opacity: 0.9; }
+        button:active:not(:disabled) { transform: scale(0.95); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* 頁尾版權資訊 */
+        footer {
+            margin-top: 3rem;
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        body.theme-scifi footer { color: rgba(255, 255, 255, 0.4); }
+        footer a { color: inherit; text-decoration: none; }
+        body.theme-scifi footer a { color: #ffc300; }
+    </style>
+</head>
+<body class="theme-original">
+
+    <div class="top-bar"></div>
+
+    <div class="theme-switcher">
+        <label for="themeSelect" style="color: inherit; font-size: 0.8rem;">主題切換：</label>
+        <select id="themeSelect" onchange="changeTheme(this.value)">
+            <option value="theme-original">經典樣式</option>
+            <option value="theme-scifi">科幻主題</option>
+        </select>
+    </div>
+
+    <div class="header-title">Start! AI小車初賽</div>
+    
+    <div class="timer-container">
+        <div id="display">00:00.000</div>
+    </div>
+
+    <div class="controls">
+        <button id="startBtn" onclick="start()">開始</button>
+        <button id="stopBtn" onclick="stop()" disabled>停止 (顯示成績)</button>
+        <button id="resetBtn" onclick="reset()">歸零</button>
+    </div>
+
+    <footer>
+        版權所有 © 2026 <a href="https://pandapanda6666.github.io" target="_blank">PandaPanda的AI日常</a> All Rights Reserved.
+    </footer>
+
+    <script>
+        let startTime;
+        let elapsedTime = 0;
+        let timerInterval;
+        let isRunning = false;
+
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+
+        // 主題切換邏輯
+        function changeTheme(themeName) {
+            document.body.className = themeName;
+        }
+
+        function timeToString(time) {
+            let diffInMin = time / 60000;
+            let mm = Math.floor(diffInMin);
+            let diffInSec = (diffInMin - mm) * 60;
+            let ss = Math.floor(diffInSec);
+            let diffInMs = (diffInSec - ss) * 1000;
+            let ms = Math.floor(diffInMs);
+
+            let formattedMM = mm.toString().padStart(2, "0");
+            let formattedSS = ss.toString().padStart(2, "0");
+            let formattedMS = ms.toString().padStart(3, "0");
+
+            return `${formattedMM}:${formattedSS}.${formattedMS}`;
+        }
+
+        function print(txt) {
+            display.innerHTML = txt;
+        }
+
+        function start() {
+            if (isRunning) return;
+            isRunning = true;
+            startTime = Date.now() - elapsedTime;
+            display.classList.remove('finished');
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            timerInterval = setInterval(function printTime() {
+                elapsedTime = Date.now() - startTime;
+                print(timeToString(elapsedTime));
+            }, 10);
+        }
+
+        function stop() {
+            if (!isRunning) return;
+            isRunning = false;
+            clearInterval(timerInterval);
+            display.classList.add('finished');
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            elapsedTime = 0;
+            print("00:00.000");
+            display.classList.remove('finished');
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (!isRunning) start();
+                else stop();
+            }
+            if (e.key.toLowerCase() === 'r') {
+                reset();
+            }
+        });
+    </script>
+</body>
+</html>
