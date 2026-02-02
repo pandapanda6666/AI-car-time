@@ -24,22 +24,55 @@
             position: relative;
         }
 
-        /* 主題切換器樣式 */
+        /* 主題切換器樣式優化 */
         .theme-switcher {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 100;
-            background: rgba(128, 128, 128, 0.2);
             padding: 10px;
             border-radius: 8px;
             font-family: sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switcher label {
+            font-size: 0.8rem;
+            margin-right: 5px;
+            font-weight: bold;
         }
 
         .theme-switcher select {
-            padding: 5px;
+            padding: 5px 10px;
             font-size: 1rem;
             cursor: pointer;
+            border-radius: 4px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        /* --- 數字分離核心設定 --- */
+        #display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* 每個數字與符號的獨立容器 */
+        .digit {
+            display: inline-block;
+            text-align: center;
+            /* 使用 ch 單位確保寬度隨字體調整且完全固定 */
+            min-width: 1.1ch; 
+        }
+
+        /* 冒號與點的寬度可以稍微窄一點 */
+        .separator {
+            display: inline-block;
+            text-align: center;
+            min-width: 0.5ch;
         }
 
         /* --- 經典主題樣式 (Original) --- */
@@ -52,34 +85,44 @@
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
         }
 
+        body.theme-original .theme-switcher {
+            background: rgba(0, 0, 0, 0.05);
+            color: #2c3e50;
+        }
+
+        body.theme-original .theme-switcher select {
+            background: #ffffff;
+            color: #2c3e50;
+            border: 1px solid #ccc;
+        }
+
         body.theme-original .top-bar { display: none; }
         
         body.theme-original .header-title {
-            font-size: 3rem;
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
             color: var(--primary-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 900;
             letter-spacing: 5px;
-            border-bottom: 8px solid var(--primary-color);
-            padding-bottom: 10px;
+            border-bottom: 6px solid var(--primary-color);
+            padding-bottom: 8px;
         }
 
         body.theme-original #display {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 15rem;
+            font-size: clamp(2rem, 12vw, 10rem);
             font-weight: bold;
             color: #000;
-            margin: 1rem 0;
             line-height: 1;
         }
 
         body.theme-original .controls button {
-            padding: 1.5rem 4rem;
-            font-size: 2rem;
+            padding: 1.2rem 3rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.8rem);
             font-weight: bold;
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
         body.theme-original #startBtn { background-color: #27ae60; color: white; }
@@ -96,8 +139,7 @@
             --bg-color: #000814;
             --tech-blue: #003566;
             --tech-yellow: #ffc300;
-            --text-shadow: 0 0 10px rgba(255, 195, 0, 0.7), 0 0 20px rgba(255, 195, 0, 0.4);
-            --panel-bg: rgba(0, 29, 61, 0.9);
+            --text-shadow: 0 0 15px rgba(255, 195, 0, 0.6);
             background-color: var(--bg-color);
             background-image: 
                 linear-gradient(rgba(0, 53, 102, 0.1) 1px, transparent 1px),
@@ -107,111 +149,143 @@
             font-family: 'Orbitron', 'PingFang TC', sans-serif;
         }
 
+        body.theme-scifi .theme-switcher {
+            background: rgba(0, 29, 61, 0.8);
+            color: #ffc300;
+            border: 1px solid #ffc300;
+            box-shadow: 0 0 10px rgba(255, 195, 0, 0.2);
+        }
+
+        body.theme-scifi .theme-switcher select {
+            background: #000814;
+            color: #ffc300;
+            border: 1px solid #ffc300;
+        }
+
+        body.theme-scifi .theme-switcher select option {
+            background: #001d3d;
+            color: #ffc300;
+        }
+
         body.theme-scifi .top-bar {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: repeating-linear-gradient(90deg, #ffc300, #ffc300 20px, #000 20px, #000 40px);
             z-index: 5;
         }
 
         body.theme-scifi .header-title {
-            font-size: clamp(1.5rem, 6vw, 3.5rem);
+            font-size: clamp(1rem, 4vw, 3rem);
             color: var(--tech-yellow);
             margin-bottom: 2rem;
             font-weight: 900;
             letter-spacing: 4px;
             text-shadow: var(--text-shadow);
-            border-bottom: 4px solid var(--tech-yellow);
+            border-bottom: 3px solid var(--tech-yellow);
             padding-bottom: 5px;
             text-align: center;
         }
 
         body.theme-scifi .timer-container {
-            background: var(--panel-bg);
-            width: 95%;
-            max-width: 1000px;
-            padding: clamp(1rem, 5vw, 4rem);
-            border-radius: 10px;
-            border: 3px solid var(--tech-yellow);
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 195, 0, 0.2);
+            background: transparent;
+            width: 100%;
+            max-width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         body.theme-scifi #display {
-            font-size: clamp(3rem, 18vw, 15rem);
+            color: #ffffff;
+            font-size: clamp(1.5rem, 11vw, 9rem);
             font-weight: 900;
-            color: var(--tech-yellow);
-            text-shadow: var(--text-shadow);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 10px var(--tech-yellow);
             margin: 0;
             line-height: 1;
-            letter-spacing: -2px;
         }
 
         body.theme-scifi .controls button {
-            padding: 1rem 2rem;
-            font-size: clamp(1rem, 3.5vw, 1.8rem);
+            padding: 0.8rem 1.8rem;
+            font-size: clamp(0.8rem, 2vw, 1.5rem);
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
             border: 2px solid var(--tech-yellow);
             border-radius: 0px;
             background: transparent;
             color: var(--tech-yellow);
-            min-width: 180px;
+            min-width: 130px;
         }
 
         body.theme-scifi #startBtn:hover:not(:disabled) { 
             background: var(--tech-yellow); 
             color: #000;
-            box-shadow: 0 0 25px var(--tech-yellow);
+            box-shadow: 0 0 20px var(--tech-yellow);
         }
 
-        body.theme-scifi #stopBtn { background: rgba(255, 195, 0, 0.1); }
+        body.theme-scifi #stopBtn { background: rgba(255, 195, 0, 0.05); }
         body.theme-scifi #stopBtn:hover:not(:disabled) { 
             background: #fff; 
             color: #000;
             border-color: #fff;
-            box-shadow: 0 0 25px #fff;
+            box-shadow: 0 0 20px #fff;
         }
 
-        body.theme-scifi #resetBtn { border-color: #555; color: #777; }
-        body.theme-scifi #resetBtn:hover:not(:disabled) { background: #555; color: white; }
+        body.theme-scifi #resetBtn { border-color: #444; color: #555; }
+        body.theme-scifi #resetBtn:hover:not(:disabled) { background: #444; color: white; }
 
         body.theme-scifi .finished {
             color: #ffffff !important;
-            text-shadow: 0 0 20px #ffffff, 0 0 40px var(--tech-yellow);
             animation: pulse 1s infinite;
         }
 
-        /* 通用按鈕效果 */
+        /* 通用控制項 */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
         button {
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        button:hover:not(:disabled) { transform: scale(1.05); opacity: 0.9; }
+        button:hover:not(:disabled) { transform: scale(1.05); }
         button:active:not(:disabled) { transform: scale(0.95); }
-        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+        button:disabled { opacity: 0.2; cursor: not-allowed; }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
 
         /* 頁尾版權資訊 */
         footer {
-            margin-top: 3rem;
-            font-size: 1rem;
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            font-size: 0.9rem;
             color: #7f8c8d;
             text-align: center;
         }
-        body.theme-scifi footer { color: rgba(255, 255, 255, 0.4); }
+        body.theme-scifi footer { color: rgba(255, 255, 255, 0.3); }
         footer a { color: inherit; text-decoration: none; }
         body.theme-scifi footer a { color: #ffc300; }
+
+        /* 行動裝置極致縮放 */
+        @media (max-width: 480px) {
+            .controls { gap: 0.5rem; }
+            button { width: 40%; padding: 0.8rem !important; min-width: unset !important; }
+            body.theme-original #display { font-size: 13vw; }
+            body.theme-scifi #display { font-size: 11vw; }
+        }
     </style>
 </head>
 <body class="theme-original">
@@ -219,7 +293,7 @@
     <div class="top-bar"></div>
 
     <div class="theme-switcher">
-        <label for="themeSelect" style="color: inherit; font-size: 0.8rem;">主題切換：</label>
+        <label for="themeSelect">主題切換：</label>
         <select id="themeSelect" onchange="changeTheme(this.value)">
             <option value="theme-original">經典樣式</option>
             <option value="theme-scifi">科幻主題</option>
@@ -229,7 +303,14 @@
     <div class="header-title">Start! AI小車初賽</div>
     
     <div class="timer-container">
-        <div id="display">00:00.000</div>
+        <div id="display">
+            <!-- 數字將由 JS 動態填入 -->
+            <span class="digit">0</span><span class="digit">0</span>
+            <span class="separator">:</span>
+            <span class="digit">0</span><span class="digit">0</span>
+            <span class="separator">.</span>
+            <span class="digit">0</span><span class="digit">0</span><span class="digit">0</span>
+        </div>
     </div>
 
     <div class="controls">
@@ -252,12 +333,13 @@
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
 
-        // 主題切換邏輯
+        // 主題切換
         function changeTheme(themeName) {
             document.body.className = themeName;
         }
 
-        function timeToString(time) {
+        // 分離數字的列印函式
+        function printTime(time) {
             let diffInMin = time / 60000;
             let mm = Math.floor(diffInMin);
             let diffInSec = (diffInMin - mm) * 60;
@@ -265,15 +347,18 @@
             let diffInMs = (diffInSec - ss) * 1000;
             let ms = Math.floor(diffInMs);
 
-            let formattedMM = mm.toString().padStart(2, "0");
-            let formattedSS = ss.toString().padStart(2, "0");
-            let formattedMS = ms.toString().padStart(3, "0");
+            let sMM = mm.toString().padStart(2, "0");
+            let sSS = ss.toString().padStart(2, "0");
+            let sMS = ms.toString().padStart(3, "0");
 
-            return `${formattedMM}:${formattedSS}.${formattedMS}`;
-        }
-
-        function print(txt) {
-            display.innerHTML = txt;
+            // 構建分離的 HTML 結構，確保位置固定
+            display.innerHTML = `
+                <span class="digit">${sMM[0]}</span><span class="digit">${sMM[1]}</span>
+                <span class="separator">:</span>
+                <span class="digit">${sSS[0]}</span><span class="digit">${sSS[1]}</span>
+                <span class="separator">.</span>
+                <span class="digit">${sMS[0]}</span><span class="digit">${sMS[1]}</span><span class="digit">${sMS[2]}</span>
+            `;
         }
 
         function start() {
@@ -283,9 +368,9 @@
             display.classList.remove('finished');
             startBtn.disabled = true;
             stopBtn.disabled = false;
-            timerInterval = setInterval(function printTime() {
+            timerInterval = setInterval(() => {
                 elapsedTime = Date.now() - startTime;
-                print(timeToString(elapsedTime));
+                printTime(elapsedTime);
             }, 10);
         }
 
@@ -302,7 +387,7 @@
             clearInterval(timerInterval);
             isRunning = false;
             elapsedTime = 0;
-            print("00:00.000");
+            printTime(0);
             display.classList.remove('finished');
             startBtn.disabled = false;
             stopBtn.disabled = true;
